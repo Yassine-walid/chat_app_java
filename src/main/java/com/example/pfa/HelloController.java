@@ -1,22 +1,35 @@
 package com.example.pfa;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class HelloController {
     @FXML
-    private TextField portID;
-
+    ComboBox<String> serverCombo = new ComboBox<>();
     @FXML
-    private TextField hostID;
+    Circle circleCol;
+
+    public void initialize() {
+        serverCombo.getItems().add("General");
+        serverCombo.getItems().add("Games");
+
+    }
+
+
+
     @FXML
     private ListView<String> listMsgs;
     PrintWriter pw;
@@ -24,9 +37,17 @@ public class HelloController {
     private TextField txtMessage;
     @FXML
     protected void connectToServer () throws Exception {
-        String host = hostID.getText();
-        int port = Integer.parseInt(portID.getText());
-
+        String host = null;
+        int port = 0;
+        String choix = serverCombo.getValue();
+        System.out.println(choix);
+        if(choix.equals("General")){
+            host = "localhost";
+            port =1234;
+        } else if (choix.equals("Games")) {
+            host = "localhost";
+            port =1212;
+        }
         Socket s = new Socket(host,port);
         InputStream is = s.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
@@ -34,6 +55,7 @@ public class HelloController {
         OutputStream os = s.getOutputStream();
         String Ip = s.getRemoteSocketAddress().toString();
         pw = new PrintWriter(os,true);
+        circleCol.setFill(Color.GREEN);
 
         new Thread(new Runnable() {
 
@@ -61,3 +83,4 @@ public class HelloController {
         pw.println(message);
     }
 }
+
